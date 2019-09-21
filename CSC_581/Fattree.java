@@ -12,9 +12,46 @@ public class Fattree {
 
 		int k = in.nextInt();
 
-		CreateTopology(k);
+		Map<Integer, String> topoMap = CreateTopology(k);
+		
+		System.out.println("print the id for first Pm");
+		int i = in.nextInt();
+		System.out.println("print the id for first Pm");
+		int j = in.nextInt();
+		
+		System.out.println(topoMap);
+		NumberOfHops(topoMap, k,i,j);
 		
 		in.close();
+	}
+
+	private static void NumberOfHops(Map<Integer, String> topoMap, int k,int i,int j) 
+	{
+		int hops;
+
+		if(i == j)
+		{
+			hops = 0;
+		}
+		else if(Math.floor((2*i)/k) == Math.floor((2*i)/k))
+		{
+			hops = 2;
+		}
+		else if (Math.floor((2*i)/k) != Math.floor((2*j)/k) && Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+		{
+			hops = 4;
+		}
+		else if(Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+		{
+			hops = 6;
+		}
+		else
+		{
+			return;
+		}
+		
+		System.out.println(hops);
+		
 	}
 
 	@SuppressWarnings("unused")
@@ -58,8 +95,7 @@ public class Fattree {
 			map.put(idNum, "Core");
 			idNum++;
 		}		
-		return map;
-		
+		return map;	
 	}
 
 }
