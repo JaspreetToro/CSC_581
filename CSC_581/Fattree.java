@@ -41,7 +41,7 @@ public class Fattree {
 		{
 			hops = 4;
 		}
-		else if(Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+		else if(Math.floor((4*i)/Math.pow(k, 2)) != Math.floor((4*j)/Math.pow(k, 2)))
 		{
 			hops = 6;
 		}
