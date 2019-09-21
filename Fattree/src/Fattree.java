@@ -12,12 +12,9 @@ public class Fattree {
 
 		int k = in.nextInt();
 
-		Map<Integer, String> topoMap = CreateTopology(k);
-
-		PrintMap(topoMap);
+		HashMap<Integer, String> topoMap = CreateTopology(k);
+		PrintMap(topoMap);		
 		
-		
-
 		in.close();
 	}
 
@@ -34,9 +31,9 @@ public class Fattree {
 
 	}
 
-	private static Map<Integer, String> CreateTopology(int k) {
+	private static HashMap<Integer, String> CreateTopology(int k) {
 		//initialize map and variables needed
-		Map<Integer, String> map = new HashMap<Integer, String>();
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
 
 		//int total = (int) (((5 * Math.pow(k, 2))+(Math.pow(k, 3)))/4);
 		int numCores = (int) ( Math.pow(k, 2)/4 );
