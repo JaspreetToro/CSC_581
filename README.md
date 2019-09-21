@@ -1,3 +1,4 @@
 # CSC_581
 Research Method Project
-Fattree programming problem.
+
+First part of the project is a general Fattree programming problem.
