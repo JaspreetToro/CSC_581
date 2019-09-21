@@ -33,7 +33,7 @@ public class Fattree {
 		{
 			hops = 0;
 		}
-		else if(Math.floor((2*i)/k) == Math.floor((2*i)/k))
+		else if(Math.floor((2*i)/k) == Math.floor((2*j)/k))
 		{
 			hops = 2;
 		}
