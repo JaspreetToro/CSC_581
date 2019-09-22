@@ -28,36 +28,64 @@ public class Fattree {
 	private static void NumberOfHops(Map<Integer, String> topoMap, int k,int i,int j) 
 	{
 		int hops;
-
-		double temp1 =  Math.floor((2*i)/k);
-		double temp2 = Math.floor((2*j)/k);
-		double temp3 = Math.floor((4*i)/Math.pow(k, 2));
-		double temp4 = Math.floor((4*j)/Math.pow(k, 2));
-		
-		if(i == j)
+		if ( i >= 0 && j <= Math.pow(k, 3)/4 -1) 
 		{
-			hops = 0;
+			if(i == j)
+			{
+				hops = 0;
+			}
+			else if(Math.floor((2*i)/k) == Math.floor((2*j)/k))
+			{
+				hops = 2;
+			}
+			else if (Math.floor((2*i)/k) != Math.floor((2*j)/k) && Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+			{
+				hops = 4;
+			}
+			else if(Math.floor((4*i)/Math.pow(k, 2)) != Math.floor((4*j)/Math.pow(k, 2)))
+			{
+				hops = 6;
+			}
+			
+			else
+			{
+				System.out.println("error");
+				return;
+			}
+	
+			System.out.println("Number of Hops: "+ hops);
 		}
-		else if(Math.floor((2*i)/k) == Math.floor((2*j)/k))
+		else if (i >= Math.pow(k, 3)/4  && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
 		{
-			hops = 2;
+			int numEdge = (int) (Math.pow(k, 2)/2);
+			int numPm = (int) (Math.pow(k, 3)/4);
+			int edge_per_pod = numEdge/k;
+			if(i >= numPm && j < 16 + edge_per_pod)
+			{
+				hops = 2;
+			}
+			else 
+			{
+				hops = 4;
+			}
+			System.out.println("Number of Hops: "+ hops);
 		}
-		else if (Math.floor((2*i)/k) != Math.floor((2*j)/k) && Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
 		{
-			hops = 4;
+			if((j-i) % k/2 == 0 )
+			{
+				hops = 2;
+			}
+			else 
+			{
+				hops = 4;
+			}
+			System.out.println("Number of Hops: "+ hops);
 		}
-		else if(Math.floor((4*i)/Math.pow(k, 2)) != Math.floor((4*j)/Math.pow(k, 2)))
+		else if(i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 + Math.pow(k, 2)/4 - 1)
 		{
-			hops = 6;
+			System.out.println("Core Switch: ");
 		}
-		else
-		{
-			System.out.println("error");
-			return;
-		}
-
-		System.out.println("Number of Hops: "+ hops);
-
 	}
 
 	@SuppressWarnings("unused")
