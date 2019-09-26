@@ -5,17 +5,15 @@ import java.util.Scanner;
 
 public class Fattree {
 
+	static HashMap<Integer, String> PodMap = new HashMap<Integer, String>();
+	static HashMap<Integer, String> TopoMap = new HashMap<Integer, String>();
+
+	
 	public static void main(String[] args) {
 
-		int[] nums = GetInput();
+		int[] nums = GetInput();		
 		
-		HashMap<Integer, String> podMap = CreatePodMap(nums[0]);
-		HashMap<Integer, String> topoMap = CreateTopology(nums[0]);
-		
-		PrintMap(podMap, true);
-		PrintMap(topoMap, false);			
-
-		NumberOfHops(topoMap, nums[0],nums[1],nums[2]);
+		NumberOfHops(nums[0],nums[1],nums[2]);
 	}
 
 	private static HashMap<Integer, String> CreatePodMap(int k) {
@@ -61,6 +59,12 @@ public class Fattree {
 		}		
 		inputs[0] = input;
 		
+		PodMap = CreatePodMap(inputs[0]);
+		TopoMap = CreateTopology(inputs[0]);
+		
+		PrintMap(PodMap, true);
+		PrintMap(TopoMap, false);	
+		
 		int total = (int) (((5 * Math.pow(inputs[0], 2))+(Math.pow(inputs[0], 3)))/4);
 
 		System.out.println("Enter the first id of Pm or switch. Must be between 0 and " + total);
@@ -84,33 +88,68 @@ public class Fattree {
 		}  
 	}
 
-
-	private static void NumberOfHops(Map<Integer, String> topoMap, int k,int i,int j) 
+	
+	private static void NumberOfHops( int k,int i,int j) 
 	{
 		int hops;
-
-		if(i == j)
+		if ( i >= 0 && j <= Math.pow(k, 3)/4 -1) 
 		{
-			hops = 0;
+			if(i == j)
+			{
+				hops = 0;
+			}
+			else if(Math.floor((2*i)/k) == Math.floor((2*j)/k))
+			{
+				hops = 2;
+			}
+			else if (Math.floor((2*i)/k) != Math.floor((2*j)/k) && Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+			{
+				hops = 4;
+			}
+			else if(Math.floor((4*i)/Math.pow(k, 2)) != Math.floor((4*j)/Math.pow(k, 2)))
+			{
+				hops = 6;
+			}
+			
+			else
+			{
+				System.out.println("error");
+				return;
+			}
+	
+			System.out.println("Number of Hops: "+ hops);
 		}
-		else if(Math.floor((2*i)/k) == Math.floor((2*j)/k))
+		else if (i >= Math.pow(k, 3)/4  && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
 		{
-			hops = 2;
+			int numEdge = (int) (Math.pow(k, 2)/2);
+			int numPm = (int) (Math.pow(k, 3)/4);
+			int edge_per_pod = numEdge/k;
+			if(i >= numPm && j < 16 + edge_per_pod)
+			{
+				hops = 2;
+			}
+			else 
+			{
+				hops = 4;
+			}
+			System.out.println("Number of Hops: "+ hops);
 		}
-		else if (Math.floor((2*i)/k) != Math.floor((2*j)/k) && Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
 		{
-			hops = 4;
+			if((j-i) % k/2 == 0 )
+			{
+				hops = 2;
+			}
+			else 
+			{
+				hops = 4;
+			}
+			System.out.println("Number of Hops: "+ hops);
 		}
-		else if(Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
+		else if(i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 + Math.pow(k, 2)/4 - 1)
 		{
-			hops = 6;
+			System.out.println("Core Switch: ");
 		}
-		else
-		{
-			return;
-		}
-
-		System.out.println(hops);
 	}
 
 	private static HashMap<Integer, String> CreateTopology(int k) {
