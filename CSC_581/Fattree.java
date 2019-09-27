@@ -132,4 +132,26 @@ public class Fattree {
 		return map;	
 	}
 
+	public static String typeOf(int k, int id) {
+		String type;
+		
+		if (id == 0 && id <= Math.pow(k, 3)/4)
+		{
+			type ="Physical Machine";
+			
+		}
+		else if(id >= Math.pow(k, 3)/4 & id <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
+		{
+			type ="Edge Switch";
+		}
+		else if (id >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 & id <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
+		{
+			type ="Aggregation Switch";
+		}
+		else //if (id >= Math.pow(k, 3)/4 + Math.pow(k, 2) & id <= Math.pow(k, 3)/4 + Math.pow(k, 2) + Math.pow(k, 2)/4 - 1)
+		{
+			type ="Core Switch";
+		}
+		return type;
+	}
 }
