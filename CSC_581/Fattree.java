@@ -5,172 +5,241 @@ import java.util.Scanner;
 
 public class Fattree {
 
+	static HashMap<Integer, String> PodMap = new HashMap<Integer, String>();
+	static HashMap<Integer, String> TopoMap = new HashMap<Integer, String>();
+
+
 	public static void main(String[] args) {
 
-		System.out.println("Hello enter k please.");
-		Scanner in = new Scanner(System.in);
+		int[] nums = GetInput();		
 
-		int k = in.nextInt();
-
-		Map<Integer, String> topoMap = CreateTopology(k);
-
-		System.out.println("print the id for first Pm");
-		int i = in.nextInt();
-		System.out.println("print the id for first Pm");
-		int j = in.nextInt();
-
-		System.out.println(topoMap);
-		NumberOfHops(topoMap, k,i,j);
-
-		in.close();
+		NumberOfHops(nums[0],nums[1],nums[2]);
 	}
 
-	private static void NumberOfHops(Map<Integer, String> topoMap, int k,int i,int j) 
-	{
-		int hops;
-		//Physical Machine to Physical Machine
-		if ( i >= 0 && j <= Math.pow(k, 3)/4 -1) 
-		{
-			if(i == j)
-			{
-				hops = 0;
-			}
-			else if(Math.floor((2*i)/k) == Math.floor((2*j)/k))
-			{
-				hops = 2;
-			}
-			else if (Math.floor((2*i)/k) != Math.floor((2*j)/k) && Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))
-			{
-				hops = 4;
-			}
-			else if(Math.floor((4*i)/Math.pow(k, 2)) != Math.floor((4*j)/Math.pow(k, 2)))
-			{
-				hops = 6;
-			}
-			
-			else
-			{
-				System.out.println("error");
-				return;
-			}
-	
-			System.out.println("Number of Hops: "+ hops);
+	private static HashMap<Integer, String> CreatePodMap(int k) {
+
+		HashMap<Integer, String> podMap = new HashMap<Integer, String>();
+
+		//assign map
+		//assign Pod 
+		for(int i = 0; i < k; i++){
+			podMap.put(i, "Pod");
 		}
-		//PM to Core
-		else if (i <= Math.pow(k, 3)/4 && j >= Math.pow(k, 3)/4 + Math.pow(k, 2))
-		{
-			System.out.println("Number of Hops: "+ 3);
-		}
-		
-		//PM to Edge
-		else if (i <= Math.pow(k, 3)/4 - 1 && (j >= Math.pow(k,3)/44 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1))
-		{	
-			System.out.println("PM -> Edge Switch");
-			int numPm = (int) (Math.pow(k, 3)/4);
-			j = j - numPm;	
-			if (Math.floor(i / 2) == j)
-			{
-				System.out.println("Under Same Edge Switch");
-				System.out.println("Number of Hops: "+1);
-			}
-					/*else if(/4 == 0)
-					{
-						
-					}*/
-					
-		}
-		//Edge Switch to Edge Switch
-		else if (i >= Math.pow(k, 3)/4 && i <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1  && j >= Math.pow(k, 3)/4 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
-		{	
-			System.out.println("Edge Switch -> Edge Switch");
-			int numPm = (int) (Math.pow(k, 3)/4);
-			i = i - numPm; j = j - numPm;
-			if(Math.floor(i / 2) == 0 && Math.floor(j / 2) == 0)
-			{
-				System.out.println("Same Pod1");
-				System.out.println("Number of Hops: "+ 2);
-			}
-			else if(Math.floor(i / 2) == 1 && Math.floor(j / 2) == 1)
-			{
-				System.out.println("Same Pod2");
-				System.out.println("Number of Hops: "+ 2);
-			}
-			else if(Math.floor(i / 2) == 2 && Math.floor(j / 2) == 2)
-			{
-				System.out.println("Same Pod3");
-				System.out.println("Number of Hops: "+ 2);
-			}
-			else if(Math.floor(i / 2) == 3 && Math.floor(j / 2) == 3)
-			{
-				System.out.println("Same Pod4");
-				System.out.println("Number of Hops: "+ 2);
-			}
-			else 
-			{
-				System.out.println("Number of Hops: " + 4);
-			}
-		}
-		
-		//Edge Switch to Aggregation Switch  
-		else if (i >= Math.pow(k, 3)/4  && i <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1 && j >= Math.pow(k, 3)/4 + Math.pow(k, 2) && j <= Math.pow(k, 3)/4 + Math.pow(k, 2) - 1)
-		{
-			System.out.println("Edge -> Aggregation Switch");
-			int numPm = (int) (Math.pow(k, 3)/4);
-			int numEdge = (int) (Math.pow(k, 2)/2);
-			i = i - numPm;
-			j = j - (numPm + numEdge);
-			if(Math.floor(i/2) == 1 && Math.floor(j/2) == 1)
-			{
-				System.out.println("Same Pod");
-				System.out.println("Number of Hops :" + 1);
-			}
-			else if(Math.floor(i/2) == 2 && Math.floor(j/2) == 2)
-			{
-				System.out.println("Number of Hops :" + 1);
-			}
-			else if(Math.floor(i/2) == 3 && Math.floor(j/2) == 3)
-			{
-				System.out.println("Number of Hops :" + 1);
-			}
-			else if(Math.floor(i/2) == 4 && Math.floor(j/2) == 4)
-			{
-				System.out.println("Number of Hops :" + 1);
+
+		return podMap;
+	}
+
+	private static int[] GetInput() {
+		boolean procceed = false;
+		String temp;
+		int input = -1;
+		Scanner in = new Scanner(System.in);
+		int[] inputs = new int[3];
+
+		while(!procceed){
+			System.out.println("Hello enter k please.");
+
+			temp = in.nextLine();
+
+			procceed = tryParseInt(temp);
+
+			if(procceed) {
+				input = Integer.parseInt(temp);
+				if(input % 2 == 0 && input > 0)
+					procceed = true;
+				else {
+					System.out.println("Error: Must be an even number greater than 0.");			
+					procceed = false;
+				}
 			}
 			else
 			{
-				System.out.println("Number of Hops: "+ 3);
+				System.out.println("Error: Must be an even number greater than 0.");	
 			}
-		}
-		
-		//Edge Switch to Core Switch
-		/*else if ()
-		{
-			System.out.println("Number of Hops: "+ 2);
-		}*/
-		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
-		{
-			if((j-i) % k/2 == 0 )
-			{
-				hops = 2;
-			}
-			else 
-			{
-				hops = 4;
-			}
-			System.out.println("Number of Hops: "+ hops);
-		}
-		else if(i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 + Math.pow(k, 2)/4 - 1)
-		{
-			System.out.println("Core Switch: ");
-		}
+		}		
+		inputs[0] = input;
+
+		PodMap = CreatePodMap(inputs[0]);
+		TopoMap = CreateTopology(inputs[0]);
+
+		PrintMap(PodMap, true);
+		PrintMap(TopoMap, false);	
+
+		int total = (int) (((5 * Math.pow(inputs[0], 2))+(Math.pow(inputs[0], 3)))/4);
+
+		System.out.println("Enter the first id of Pm or switch. Must be between 0 and " + total);
+
+		inputs[1] = in.nextInt();	
+
+		System.out.println(inputs[1] + " " + typeOf(inputs[0],inputs[1]));
+
+		System.out.println("Enter the second id of Pm or switch. Must be between 0 and " + total);
+
+		inputs[2] = in.nextInt();	
+
+		System.out.println(inputs[2] + " " + typeOf(inputs[0],inputs[2]));
+
+		in.close();
+		return inputs;
+	}
+
+	public static boolean tryParseInt(String value) {  
+		try {  
+			Integer.parseInt(value);  
+			return true;  
+		} catch (NumberFormatException e) {  
+			return false;  
+		}  
 	}
 
 	@SuppressWarnings("unused")
-	private static Map<Integer, String> CreateTopology(int k) {
-		//initialize map and variables needed
-		Map<Integer, String> map = new HashMap<Integer, String>();
+	private static void NumberOfHops( int k,int i,int j) 
+	{
+		int hops = 0;//for now so we wont get a error later we wont initialize
+		int start = 0;
+		int tempI = i;
+		int tempJ = j;
 
-		int total = (int) (((5 * Math.pow(k, 2))+(Math.pow(k, 3)))/4);
+
+		//number of each nodes
+		int numPms = (int)(Math.pow(k, 3)/4);
+		int numEdges = (int)(Math.pow(k, 2)/2);
+		int numAggs = (int)(Math.pow(k, 2)/2);
+		int numCores = (int) ( Math.pow(k, 2)/4 );
+
+		//start and end points of each type of node   						//if k = 2		k=4
+		int pmStart = 0;													// 0			0
+		int pmEnd = numPms - 1;												// 1			15
+		int edgeStart = numPms;												// 2			16
+		int edgeEnd = numPms + numEdges -1;									// 3			23
+		int aggStart = edgeEnd +1;											// 4			24
+		int aggEnd = aggStart + numAggs -1;									// 5			31
+		int coreStart = aggEnd +1;											// 6			32
+		int coreEnd = (int)(((5*Math.pow(k, 2)+ Math.pow(k, 3))/4) - 1);	// 7			35
+
+		//determine the smaller and bigger one of the two ids
+		i = Integer.min(tempI, tempJ);
+		j = Integer.max(tempI, tempJ);
+
+		if(i == j)//same node
+		{
+			hops = 0;
+		}
+		else if(typeOf(k,i) == "Physical Machine") { /////////// Physical Machine ///////////////////
+			if(typeOf(k,j) == "Physical Machine") { // i and j are pm
+				if(Math.floor((2*i)/k) == Math.floor((2*j)/k))// within same edge switch
+				{
+					hops = 2;
+				}
+				else if (Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))// within same pod
+				{
+					hops = 4;
+				}
+				else //any other
+				{
+					hops = 6;
+				}
+
+			}
+			else if(typeOf(k,j) == "Edge Switch") {
+				System.out.println("PM -> Edge Switch");
+				int numPm = (int) (Math.pow(k, 3)/4);	
+				if (Math.floor(i / 2) == j)
+				{
+					System.out.println("Under Same Edge Switch");
+					hops = 1;
+				}
+				
+				else if(Math.floor(i/numCores) == Math.floor(j - edgeStart)/(k/2))
+				{
+							System.out.println("Under the same Pod");
+							hops = 3;
+				}
+				else
+				{
+					hops = 5;
+				}
+						
+			}
+			else if(typeOf(k,j) == "Aggregation Switch") {
+
+			}
+			else {//Pm and Core switch
+				hops = 3;
+			}
+		}
+		else if (typeOf(k,i) == "Edge Switch") { /////////////////Edge Switch ///////////////////
+			if(typeOf(k,j) == "Edge Switch") { // j == edge
+				int numEdge = (int) (Math.pow(k, 2)/2);
+				int numPm = (int) (Math.pow(k, 3)/4);
+				int edge_per_pod = numEdge/k;
+				if(i >= numPm && j < 16 + edge_per_pod)
+				{
+					hops = 2;
+				}
+				else 
+				{
+					hops = 4;
+				}
+			}
+			else if(typeOf(k,j) == "Aggregation Switch") { //j == agg
+				if(Math.floor((i - edgeStart)/(k/2)) == Math.floor((j - aggStart)/(k/2))) {
+					hops = 1;
+				}
+				else {
+					hops = 3;
+				}
+			}
+			else {//edge and Core switch j == core
+				hops = 2;
+			}
+		}
+		else if(typeOf(k,i) == "Aggregation Switch") { //////////////// Aggregation Switch ///////////////////
+			if(typeOf(k,j) == "Aggregation Switch") {
+				if(Math.floor((i - aggStart)/(k/2)) == Math.floor((j - aggStart)/(k/2)) || ((i - aggStart)%(k/2)) == ((j - aggStart)%(k/2))) {
+					hops = 2;
+				}
+				else {
+					hops = 4;
+				}
+			}
+			else {//agg and Core switch
+				if((i - aggStart)%(k/2) == Math.floor((j - coreStart)/(k/2))) {
+					hops = 1;
+				}
+				else {
+					hops = 3;
+				}
+			}
+		}
+		else { ///////////////// Core Switch //////////////////////
+			if(Math.floor((i - coreStart)/(k/2)) == Math.floor((j - coreStart)/(k/2))) {
+				hops = 2;
+			}
+			else {
+				hops = 4;
+			}
+		}
+		//		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
+		//		{
+		//			if((j-i) % k/2 == 0 )
+		//			{
+		//				hops = 2;
+		//			}
+		//			else 
+		//			{
+		//				hops = 4;
+		//			}
+		//		}
+
+
+		System.out.println("Number of Hops: "+ hops);
+	}
+
+	private static HashMap<Integer, String> CreateTopology(int k) {
+		//initialize map and variables needed
+		HashMap<Integer, String> map = new HashMap<Integer, String>();
+
 		int numCores = (int) ( Math.pow(k, 2)/4 );
 		int numAgg = (int) (Math.pow(k, 2)/2);
 		int numEdge = (int) (Math.pow(k, 2)/2);
@@ -182,7 +251,7 @@ public class Fattree {
 		//assign map
 		//assign PMs 
 		while(idNum < localTotal){
-			map.put(idNum, "PM");
+			map.put(idNum, "Pm");
 			idNum++;
 		}
 
@@ -206,21 +275,41 @@ public class Fattree {
 			map.put(idNum, "Core");
 			idNum++;
 		}		
-		return map;	
+
+		return map;		
+	}
+
+	private static void PrintMap(Map<Integer, String> topoMap, boolean isPodMap) {
+
+		String title = "";
+		if(isPodMap) {
+			title = "\n--------------------------------Pod------------------------------------";
+		}
+		else {      
+			title = "\n------------------------Pm and all Switches----------------------------";
+		}
+
+		System.out.println(title);
+
+		for(Map.Entry<Integer, String> entry : topoMap.entrySet()) {
+			System.out.println(entry.getValue() + "Id: " + entry.getKey());
+			//System.out.println(entry.getKey() + ":" + entry.getValue());
+		}
+
+		System.out.println("-----------------------------------------------------------------------");
 	}
 
 	public static String typeOf(int k, int id) {
 		String type;
-		
-		if (id == 0 && id <= Math.pow(k, 3)/4)
+
+		if (id >= 0 && id <= (Math.pow(k, 3)/4) - 1)
 		{
 			type ="Physical Machine";
-			
+
 		}
 		else if(id >= Math.pow(k, 3)/4 & id <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
 		{
 			type ="Edge Switch";
-			
 		}
 		else if (id >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 & id <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
 		{
