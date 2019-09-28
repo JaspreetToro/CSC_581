@@ -28,6 +28,7 @@ public class Fattree {
 	private static void NumberOfHops(Map<Integer, String> topoMap, int k,int i,int j) 
 	{
 		int hops;
+		//Physical Machine to Physical Machine
 		if ( i >= 0 && j <= Math.pow(k, 3)/4 -1) 
 		{
 			if(i == j)
@@ -55,13 +56,35 @@ public class Fattree {
 	
 			System.out.println("Number of Hops: "+ hops);
 		}
-		else if (i >= Math.pow(k, 3)/4  && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
+		//PM to Core
+		else if (i <= Math.pow(k, 3)/4 && j >= Math.pow(k, 3)/4 + Math.pow(k, 2))
+		{
+			System.out.println("Number of Hops: "+ 3);
+		}
+		
+		//PM to Edge
+		else if (i <= Math.pow(k, 3)/4 - 1 && (j >= Math.pow(k,3)/44 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1))
 		{	
-			System.out.println("Edge Switch");
+			System.out.println("PM -> Edge Switch");
+			int numPm = (int) (Math.pow(k, 3)/4);
+			j = j - numPm;	
+			if (Math.floor(i / 2) == j)
+			{
+				System.out.println("Under Same Edge Switch");
+				System.out.println("Number of Hops: "+1);
+			}
+					/*else if(/4 == 0)
+					{
+						
+					}*/
+					
+		}
+		//Edge Switch to Edge Switch
+		else if (i >= Math.pow(k, 3)/4 && i <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1  && j >= Math.pow(k, 3)/4 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
+		{	
+			System.out.println("Edge Switch -> Edge Switch");
 			int numPm = (int) (Math.pow(k, 3)/4);
 			i = i - numPm; j = j - numPm;
-			System.out.println(i);
-			System.out.println(j);
 			if(Math.floor(i / 2) == 0 && Math.floor(j / 2) == 0)
 			{
 				System.out.println("Same Pod1");
@@ -87,6 +110,43 @@ public class Fattree {
 				System.out.println("Number of Hops: " + 4);
 			}
 		}
+		
+		//Edge Switch to Aggregation Switch  
+		else if (i >= Math.pow(k, 3)/4  && i <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1 && j >= Math.pow(k, 3)/4 + Math.pow(k, 2) && j <= Math.pow(k, 3)/4 + Math.pow(k, 2) - 1)
+		{
+			System.out.println("Edge -> Aggregation Switch");
+			int numPm = (int) (Math.pow(k, 3)/4);
+			int numEdge = (int) (Math.pow(k, 2)/2);
+			i = i - numPm;
+			j = j - (numPm + numEdge);
+			if(Math.floor(i/2) == 1 && Math.floor(j/2) == 1)
+			{
+				System.out.println("Same Pod");
+				System.out.println("Number of Hops :" + 1);
+			}
+			else if(Math.floor(i/2) == 2 && Math.floor(j/2) == 2)
+			{
+				System.out.println("Number of Hops :" + 1);
+			}
+			else if(Math.floor(i/2) == 3 && Math.floor(j/2) == 3)
+			{
+				System.out.println("Number of Hops :" + 1);
+			}
+			else if(Math.floor(i/2) == 4 && Math.floor(j/2) == 4)
+			{
+				System.out.println("Number of Hops :" + 1);
+			}
+			else
+			{
+				System.out.println("Number of Hops: "+ 3);
+			}
+		}
+		
+		//Edge Switch to Core Switch
+		/*else if ()
+		{
+			System.out.println("Number of Hops: "+ 2);
+		}*/
 		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
 		{
 			if((j-i) % k/2 == 0 )
