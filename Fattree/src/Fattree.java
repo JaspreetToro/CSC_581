@@ -71,9 +71,13 @@ public class Fattree {
 
 		inputs[1] = in.nextInt();	
 
+		System.out.println(inputs[1] + " " + typeOf(inputs[0],inputs[1]));
+
 		System.out.println("Enter the second id of Pm or switch. Must be between 0 and " + total);
 
 		inputs[2] = in.nextInt();	
+
+		System.out.println(inputs[2] + " " + typeOf(inputs[0],inputs[2]));
 
 		in.close();
 		return inputs;
@@ -121,56 +125,109 @@ public class Fattree {
 		{
 			hops = 0;
 		}
-		else if(typeOf(k,i) == "Physical Machine") { //i = pm
+		else if(typeOf(k,i) == "Physical Machine") { /////////// Physical Machine ///////////////////
 			if(typeOf(k,j) == "Physical Machine") { // i and j are pm
-				if ( i >= pmStart && i <= pmEnd  && j <= pmEnd && j >= pmStart) 
-				{	
-					if(Math.floor((2*i)/k) == Math.floor((2*j)/k))// within same edge switch
-					{
-						hops = 2;
-					}
-					else if (Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))// within same pod
-					{
-						hops = 4;
-					}
-					else //any other
-					{
-						hops = 6;
-					}
+				if(Math.floor((2*i)/k) == Math.floor((2*j)/k))// within same edge switch
+				{
+					hops = 2;
+				}
+				else if (Math.floor((4*i)/Math.pow(k, 2)) == Math.floor((4*j)/Math.pow(k, 2)))// within same pod
+				{
+					hops = 4;
+				}
+				else //any other
+				{
+					hops = 6;
+				}
+
+			}
+			else if(typeOf(k,j) == "Edge Switch") {
+				System.out.println("PM -> Edge Switch");
+				int numPm = (int) (Math.pow(k, 3)/4);
+				j = j - numPm;	
+				if (Math.floor(i / 2) == j)
+				{
+					System.out.println("Under Same Edge Switch");
+					System.out.println("Number of Hops: "+1);
+				}
+						/*else if(/4 == 0)
+						{
+							
+						}*/
+						
+			}
+			else if(typeOf(k,j) == "Aggregation Switch") {
+
+			}
+			else {//Pm and Core switch
+				hops = 3;
+			}
+		}
+		else if (typeOf(k,i) == "Edge Switch") { /////////////////Edge Switch ///////////////////
+			if(typeOf(k,j) == "Edge Switch") { // j == edge
+				int numEdge = (int) (Math.pow(k, 2)/2);
+				int numPm = (int) (Math.pow(k, 3)/4);
+				int edge_per_pod = numEdge/k;
+				if(i >= numPm && j < 16 + edge_per_pod)
+				{
+					hops = 2;
+				}
+				else 
+				{
+					hops = 4;
+				}
+			}
+			else if(typeOf(k,j) == "Aggregation Switch") { //j == agg
+				if(Math.floor((i - edgeStart)/(k/2)) == Math.floor((j - aggStart)/(k/2))) {
+					hops = 1;
+				}
+				else {
+					hops = 3;
+				}
+			}
+			else {//edge and Core switch j == core
+				hops = 2;
+			}
+		}
+		else if(typeOf(k,i) == "Aggregation Switch") { //////////////// Aggregation Switch ///////////////////
+			if(typeOf(k,j) == "Aggregation Switch") {
+				if(Math.floor((i - aggStart)/(k/2)) == Math.floor((j - aggStart)/(k/2)) || ((i - aggStart)%(k/2)) == ((j - aggStart)%(k/2))) {
+					hops = 2;
+				}
+				else {
+					hops = 4;
+				}
+			}
+			else {//agg and Core switch
+				if((i - aggStart)%(k/2) == Math.floor((j - coreStart)/(k/2))) {
+					hops = 1;
+				}
+				else {
+					hops = 3;
 				}
 			}
 		}
-		// if both edge switches
-		else if (i >= Math.pow(k, 3)/4  && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 - 1)
-		{
-			int numEdge = (int) (Math.pow(k, 2)/2);
-			int numPm = (int) (Math.pow(k, 3)/4);
-			int edge_per_pod = numEdge/k;
-			if(i >= numPm && j < 16 + edge_per_pod)
-			{
+		else { ///////////////// Core Switch //////////////////////
+			if(Math.floor((i - coreStart)/(k/2)) == Math.floor((j - coreStart)/(k/2))) {
 				hops = 2;
 			}
-			else 
-			{
+			else {
 				hops = 4;
 			}
 		}
-		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
-		{
-			if((j-i) % k/2 == 0 )
-			{
-				hops = 2;
-			}
-			else 
-			{
-				hops = 4;
-			}
-		}
-		else if(i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 && j <= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 + Math.pow(k, 2)/4 - 1)
-		{
-			System.out.println("Core Switch: ");
-		}
-		
+		//		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
+		//		{
+		//			if((j-i) % k/2 == 0 )
+		//			{
+		//				hops = 2;
+		//			}
+		//			else 
+		//			{
+		//				hops = 4;
+		//			}
+		//		}
+
+
 		System.out.println("Number of Hops: "+ hops);
 	}
 
@@ -240,7 +297,7 @@ public class Fattree {
 	public static String typeOf(int k, int id) {
 		String type;
 
-		if (id >= 0 && id <= Math.pow(k, 3)/4)
+		if (id >= 0 && id <= (Math.pow(k, 3)/4) - 1)
 		{
 			type ="Physical Machine";
 
