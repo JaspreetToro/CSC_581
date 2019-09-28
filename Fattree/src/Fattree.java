@@ -71,13 +71,13 @@ public class Fattree {
 
 		inputs[1] = in.nextInt();	
 
-		System.out.println(inputs[1] + " " + typeOf(inputs[0],inputs[1]));
+		System.out.println("Id " + inputs[1] + " is " + typeOf(inputs[0],inputs[1]));
 
 		System.out.println("Enter the second id of Pm or switch. Must be between 0 and " + total);
 
 		inputs[2] = in.nextInt();	
 
-		System.out.println(inputs[2] + " " + typeOf(inputs[0],inputs[2]));
+		System.out.println("Id " + inputs[2] + " is " + typeOf(inputs[0],inputs[2]));
 
 		in.close();
 		return inputs;
@@ -95,17 +95,17 @@ public class Fattree {
 	@SuppressWarnings("unused")
 	private static void NumberOfHops( int k,int i,int j) 
 	{
-		int hops = 0;//for now so we wont get a error later we wont initialize
+		int hops;//for now so we wont get a error later we wont initialize
 		int start = 0;
 		int tempI = i;
 		int tempJ = j;
 
 
-		//number of each nodes
-		int numPms = (int)(Math.pow(k, 3)/4);
-		int numEdges = (int)(Math.pow(k, 2)/2);
-		int numAggs = (int)(Math.pow(k, 2)/2);
-		int numCores = (int) ( Math.pow(k, 2)/4 );
+		//number of each nodes   				//if 	k = 2		k=4
+		int numPms = (int)(Math.pow(k, 3)/4);	//		2 			16										
+		int numEdges = (int)(Math.pow(k, 2)/2);	// 		2			8
+		int numAggs = (int)(Math.pow(k, 2)/2);  //		2			8
+		int numCores = (int) ( Math.pow(k, 2)/4 );//	1			4
 
 		//start and end points of each type of node   						//if k = 2		k=4
 		int pmStart = 0;													// 0			0
@@ -139,25 +139,30 @@ public class Fattree {
 				{
 					hops = 6;
 				}
-
 			}
 			else if(typeOf(k,j) == "Edge Switch") {
-				System.out.println("PM -> Edge Switch");
-				int numPm = (int) (Math.pow(k, 3)/4);
-				j = j - numPm;	
 				if (Math.floor(i / 2) == j)
 				{
-					System.out.println("Under Same Edge Switch");
-					System.out.println("Number of Hops: "+1);
+					hops = 1;
 				}
-						/*else if(/4 == 0)
-						{
-							
-						}*/
-						
+
+				else if(Math.floor(i/numCores) == Math.floor(j - edgeStart)/(k/2))
+				{
+					hops = 3;
+				}
+				else
+				{
+					hops = 5;
+				}
+
 			}
 			else if(typeOf(k,j) == "Aggregation Switch") {
-
+				if(Math.floor(i/(numCores)) == Math.floor((j - aggStart)/(k/2))) {
+					hops = 2;
+				}
+				else {
+					hops = 4;
+				}
 			}
 			else {//Pm and Core switch
 				hops = 3;
@@ -215,19 +220,6 @@ public class Fattree {
 				hops = 4;
 			}
 		}
-		//		else if (i >= Math.pow(k, 3)/4 + Math.pow(k, 2)/2 && j <= Math.pow(k,3)/4 + Math.pow(k, 2)/2 + Math.pow(k, 2)/2 - 1 )
-		//		{
-		//			if((j-i) % k/2 == 0 )
-		//			{
-		//				hops = 2;
-		//			}
-		//			else 
-		//			{
-		//				hops = 4;
-		//			}
-		//		}
-
-
 		System.out.println("Number of Hops: "+ hops);
 	}
 
@@ -288,7 +280,6 @@ public class Fattree {
 
 		for(Map.Entry<Integer, String> entry : topoMap.entrySet()) {
 			System.out.println(entry.getValue() + "Id: " + entry.getKey());
-			//System.out.println(entry.getKey() + ":" + entry.getValue());
 		}
 
 		System.out.println("-----------------------------------------------------------------------");
@@ -310,7 +301,7 @@ public class Fattree {
 		{
 			type ="Aggregation Switch";
 		}
-		else //if (id >= Math.pow(k, 3)/4 + Math.pow(k, 2) & id <= Math.pow(k, 3)/4 + Math.pow(k, 2) + Math.pow(k, 2)/4 - 1)
+		else //if 
 		{
 			type ="Core Switch";
 		}
